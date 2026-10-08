@@ -186,6 +186,11 @@ def generate_scan_guidance(
     language: str = "en",
 ) -> Optional[Dict[str, Any]]:
     """Return safe, structured scan guidance from Gemma 4, or None on any failure."""
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+    if not api_key:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=500, detail="GEMINI_API_KEY is not configured")
+        
     client = _get_gemini_client()
     if client is None:
         return None
@@ -240,7 +245,7 @@ Make the explanation detailed and pointwise as requested."""
             
         return guidance
     except Exception as exc:
-        logger.warning("Gemma 4 scan guidance unavailable: %s", exc)
+        logger.error(f"Gemini API Error: {str(exc)}")
         return None
 
 def generate_scientific_report(crop: str, disease: str, language: str = "en") -> str:
