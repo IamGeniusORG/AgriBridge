@@ -383,7 +383,18 @@ return (
       </div>
 
       {/* Quick Question Chips (FR-5.1) */}
-      <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 4, marginTop: 8, flexShrink: 0 }}>
+      <div
+        className="scrollbar-hide"
+        style={{
+          display: 'flex',
+          gap: 6,
+          overflowX: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          paddingBottom: 4,
+          marginTop: 8,
+          flexShrink: 0
+        }}
+      >
         {quickChips.map((chip, i) => (
           <button
             key={i}
@@ -578,7 +589,7 @@ return (
             background: 'var(--card)',
             border: '1px solid var(--border)',
             color: 'var(--foreground)',
-            fontSize: '0.95rem'
+            fontSize: '16px'
           }}
         />
 

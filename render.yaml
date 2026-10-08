@@ -27,3 +27,5 @@ services:
         value: "20"
       - key: VITE_API_BASE_URL
         value: "https://agribridge-backend.onrender.com"  # ⚠️ MUST match your actual backend URL
+      - key: VITE_CLERK_PUBLISHABLE_KEY
+        sync: false  # ⚠️ Add this in Render dashboard under Environment

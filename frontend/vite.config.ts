@@ -29,5 +29,10 @@ export default defineConfig({
         secure: false
       }
     }
+  },
+  build: {
+    target: 'es2020',
+    cssCodeSplit: true,
+    chunkSizeWarningLimit: 800
   }
 });

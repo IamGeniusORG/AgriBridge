@@ -650,8 +650,17 @@ export const FieldsTab: React.FC<FieldsTabProps> = ({
 
       {/* Plot Selector Carousel */}
       {plots.length > 0 ? (
-        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
-          {plots.map((p) => {
+        <div
+          className="scrollbar-hide"
+          style={{
+            display: 'flex',
+            gap: 8,
+            overflowX: 'auto',
+            WebkitOverflowScrolling: 'touch',
+            paddingBottom: 4
+          }}
+        >
+          {(Array.isArray(plots) ? plots : []).map((p) => {
             const isSelected = activePlot?.id === p.id;
             return (
               <button
@@ -737,14 +746,19 @@ export const FieldsTab: React.FC<FieldsTabProps> = ({
       )}
 
       {/* Data Cards Navigation Switcher */}
-      <div style={{
-        display: 'flex',
-        borderRadius: 12,
-        background: 'var(--card)',
-        border: '1px solid var(--border)',
-        padding: 4,
-        gap: 4
-      }}>
+      <div
+        className="scrollbar-hide"
+        style={{
+          display: 'flex',
+          borderRadius: 12,
+          background: 'var(--card)',
+          border: '1px solid var(--border)',
+          padding: 4,
+          gap: 4,
+          overflowX: 'auto',
+          WebkitOverflowScrolling: 'touch'
+        }}
+      >
         {(['weather', 'soil', 'ndvi', 'regenerative'] as const).map((tabKey) => {
           const isActive = activeCardTab === tabKey;
           const labels: Record<string, string> = {
@@ -758,8 +772,10 @@ export const FieldsTab: React.FC<FieldsTabProps> = ({
               key={tabKey}
               onClick={() => setActiveCardTab(tabKey)}
               style={{
-                flex: 1,
-                padding: '8px 4px',
+                flex: '1 0 auto',
+                minWidth: 'fit-content',
+                whiteSpace: 'nowrap',
+                padding: '8px 10px',
                 border: 'none',
                 borderRadius: 8,
                 fontSize: '0.8rem',

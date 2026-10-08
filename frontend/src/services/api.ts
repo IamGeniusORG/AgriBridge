@@ -34,11 +34,23 @@ export const apiClient = {
       const res = await fetch(`${API_BASE}/plots`);
       if (!res.ok) throw new Error('Failed to fetch plots');
       const data = await res.json();
-      localStorage.setItem(STORAGE_PLOTS_KEY, JSON.stringify(data));
-      return data;
+      if (Array.isArray(data)) {
+        localStorage.setItem(STORAGE_PLOTS_KEY, JSON.stringify(data));
+        return data;
+      }
+      if (data && Array.isArray((data as any).plots)) {
+        localStorage.setItem(STORAGE_PLOTS_KEY, JSON.stringify((data as any).plots));
+        return (data as any).plots;
+      }
+      return [];
     } catch (e) {
       const cached = localStorage.getItem(STORAGE_PLOTS_KEY);
-      if (cached) return JSON.parse(cached);
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed)) return parsed;
+        } catch {}
+      }
       return [];
     }
   },
@@ -365,11 +377,21 @@ export const apiClient = {
       });
       if (!res.ok) throw new Error('Calculation request failed');
       const data = await res.json();
-      localStorage.setItem(`agribridge_carbon_calc_${req.plot_id || 'custom'}`, JSON.stringify(data));
-      return data;
+      if (data && Array.isArray(data.yearly_trajectory) && Array.isArray(data.recommendations)) {
+        localStorage.setItem(`agribridge_carbon_calc_${req.plot_id || 'custom'}`, JSON.stringify(data));
+        return data;
+      }
+      throw new Error('Malformed carbon calculation response');
     } catch (e) {
       const cached = localStorage.getItem(`agribridge_carbon_calc_${req.plot_id || 'custom'}`);
-      if (cached) return JSON.parse(cached);
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (parsed && Array.isArray(parsed.yearly_trajectory) && Array.isArray(parsed.recommendations)) {
+            return parsed;
+          }
+        } catch {}
+      }
 
       // Deterministic client-side approximation for offline mode
       const bd = 1.30;

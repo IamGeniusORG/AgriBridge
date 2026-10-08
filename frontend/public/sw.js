@@ -28,6 +28,22 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+
+  const url = new URL(event.request.url);
+  // Never intercept Vite internal modules, HMR, or local dev requests
+  if (
+    url.pathname.startsWith('/@') ||
+    url.pathname.startsWith('/src/') ||
+    url.pathname.includes('node_modules') ||
+    url.search.includes('v=') ||
+    url.hostname === 'localhost' ||
+    url.hostname === '127.0.0.1' ||
+    /^10\./.test(url.hostname) ||
+    /^192\.168\./.test(url.hostname)
+  ) {
+    return;
+  }
+
   // Network first with fallback to cache for offline availability
   event.respondWith(
     fetch(event.request)

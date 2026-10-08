@@ -19,6 +19,7 @@ import { OnboardingModal } from './components/OnboardingModal';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
+  tabName?: string;
 }
 
 interface ErrorBoundaryState {
@@ -37,17 +38,22 @@ class TabErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundary
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("Tab Error Boundary caught an error:", error, errorInfo);
+    console.error(`Tab Error Boundary [${this.props.tabName || 'View'}] caught an error:`, error, errorInfo);
   }
 
   render() {
     if (this.state.hasError) {
       return (
         <div style={{ padding: '2.5rem', textAlign: 'center', background: 'var(--card)', borderRadius: '1.25rem', border: '1px solid var(--border)', margin: '1rem 0' }}>
-          <h3 style={{ color: 'var(--brand-amber)', marginBottom: '0.5rem', fontSize: '1.15rem' }}>Unable to load view</h3>
+          <h3 style={{ color: 'var(--brand-amber)', marginBottom: '0.5rem', fontSize: '1.15rem' }}>Unable to load {this.props.tabName ? `${this.props.tabName} ` : ''}view</h3>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', maxWidth: 450, margin: '0 auto' }}>
             {this.state.error?.message || 'A rendering error occurred in this tab.'}
           </p>
+          {this.state.error?.stack && (
+            <pre style={{ color: '#ef4444', fontSize: '0.72rem', whiteSpace: 'pre-wrap', textAlign: 'left', marginTop: '1rem', maxHeight: 200, overflowY: 'auto', background: 'rgba(0,0,0,0.3)', padding: '8px', borderRadius: '8px' }}>
+              {this.state.error.stack}
+            </pre>
+          )}
           <button
             onClick={() => this.setState({ hasError: false })}
             style={{
@@ -145,10 +151,12 @@ export const App: React.FC = () => {
     }
 
     apiClient.getPlots().then((pts) => {
-      if (pts.length > 0) {
-        setPlots(pts);
-        setSelectedPlot(pts[0]);
+      const validPlots = Array.isArray(pts) ? pts : [];
+      if (validPlots.length > 0) {
+        setPlots(validPlots);
+        setSelectedPlot(validPlots[0]);
       } else {
+        setPlots([]);
         if ('geolocation' in navigator) {
           navigator.geolocation.getCurrentPosition(
             (pos) => {
@@ -160,8 +168,10 @@ export const App: React.FC = () => {
                 lon: pos.coords.longitude,
                 area_ha: 1.0
               }).then(newPlot => {
-                setPlots([newPlot]);
-                setSelectedPlot(newPlot);
+                if (newPlot && newPlot.id) {
+                  setPlots([newPlot]);
+                  setSelectedPlot(newPlot);
+                }
               }).catch(console.error);
             },
             (err) => console.warn('GPS denied or failed', err),
@@ -321,7 +331,7 @@ export const App: React.FC = () => {
           <main className="main-scroll-view scrollbar-hide">
             {/* Content Container */}
             <div className="app-content-container">
-              <TabErrorBoundary>
+              <TabErrorBoundary tabName="Home">
                 <div style={{ display: activeTab === 'home' ? 'block' : 'none', height: '100%' }}>
                   <HomeTab
                     locale={locale}
@@ -334,7 +344,9 @@ export const App: React.FC = () => {
                     onSyncOfflineQueue={syncOfflineScans}
                   />
                 </div>
+              </TabErrorBoundary>
 
+              <TabErrorBoundary tabName="Fields">
                 <div style={{ display: activeTab === 'fields' ? 'block' : 'none', height: '100%' }}>
                   <FieldsTab
                     locale={locale}
@@ -347,7 +359,9 @@ export const App: React.FC = () => {
                     isActive={activeTab === 'fields'}
                   />
                 </div>
+              </TabErrorBoundary>
 
+              <TabErrorBoundary tabName="Scan">
                 <div style={{ display: activeTab === 'scan' ? 'block' : 'none', height: '100%' }}>
                   <ScanTab
                     locale={locale}
@@ -357,7 +371,9 @@ export const App: React.FC = () => {
                     onOpenAskWithScan={handleOpenAskWithScan}
                   />
                 </div>
+              </TabErrorBoundary>
 
+              <TabErrorBoundary tabName="Ask">
                 <div style={{ display: activeTab === 'ask' ? 'block' : 'none', height: '100%' }}>
                   <AskTab
                     locale={locale}
@@ -365,7 +381,9 @@ export const App: React.FC = () => {
                     latestScan={latestScan}
                   />
                 </div>
+              </TabErrorBoundary>
 
+              <TabErrorBoundary tabName="Carbon">
                 <div style={{ display: activeTab === 'carbon' ? 'block' : 'none', height: '100%' }}>
                   <CarbonTab
                     locale={locale}
@@ -374,7 +392,9 @@ export const App: React.FC = () => {
                     onSelectPlot={(p) => setSelectedPlot(p)}
                   />
                 </div>
+              </TabErrorBoundary>
 
+              <TabErrorBoundary tabName="More">
                 <div style={{ display: activeTab === 'more' ? 'block' : 'none', height: '100%' }}>
                   <MoreTab
                     locale={locale}

@@ -18,7 +18,6 @@ import {
   History,
   X
 } from 'lucide-react';
-import html2pdf from 'html2pdf.js';
 import { TRANSLATIONS, Locale } from '../services/i18n';
 import { ScanResult, Plot } from '../types';
 import { apiClient, API_BASE } from '../services/api';
@@ -541,8 +540,8 @@ export const ScanTab: React.FC<ScanTabProps> = ({
                 {t.ensureFocus || "Ensure clear focus on spots or diseased lesions"}
               </p>
 
-              <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
-                <button id="scan-camera-launch-btn" className="btn-primary" onClick={startCamera}>
+              <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button id="scan-camera-launch-btn" className="btn-primary" onClick={startCamera} style={{ flex: '1 1 140px', justifyContent: 'center' }}>
                   <Camera size={18} />
                   <span>{t.liveCamera || "Live Camera"}</span>
                 </button>
@@ -550,6 +549,7 @@ export const ScanTab: React.FC<ScanTabProps> = ({
                   id="scan-gallery-launch-btn"
                   className="btn-secondary"
                   onClick={() => galleryInputRef.current?.click()}
+                  style={{ flex: '1 1 140px', justifyContent: 'center' }}
                 >
                   <Upload size={18} />
                   <span>{t.choosePhoto || "Choose Photo"}</span>

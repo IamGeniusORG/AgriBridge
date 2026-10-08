@@ -142,7 +142,7 @@ export const CarbonTab: React.FC<CarbonTabProps> = ({
 
   // Trajectory Chart Calculation for SVG rendering
   const trajectoryChartData = useMemo(() => {
-    if (!result?.yearly_trajectory || result.yearly_trajectory.length === 0) return null;
+    if (!result?.yearly_trajectory || !Array.isArray(result.yearly_trajectory) || result.yearly_trajectory.length === 0) return null;
     const points = result.yearly_trajectory;
     const maxCo2e = Math.max(...points.map((p) => p.cumulative_co2e_t), 1.0);
     const minCo2e = 0;
@@ -293,14 +293,7 @@ export const CarbonTab: React.FC<CarbonTabProps> = ({
       </div>
 
       {/* Main Grid: Controls on Left, KPIs & Visualizations on Right */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '1.5rem',
-          alignItems: 'start'
-        }}
-      >
+      <div className="carbon-main-grid">
         {/* Left Column: Interactive Parameters */}
         <div
           className="glass-card"
@@ -332,7 +325,7 @@ export const CarbonTab: React.FC<CarbonTabProps> = ({
               style={{ width: '100%', padding: '0.65rem', borderRadius: '0.65rem' }}
             >
               <option value="custom">{t.carbonCustomParcel || '-- Custom Parcel Parameters --'}</option>
-              {plots.map((p) => (
+              {(Array.isArray(plots) ? plots : []).map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.name} ({p.crop} - {p.area_ha} ha)
                 </option>
@@ -801,7 +794,7 @@ export const CarbonTab: React.FC<CarbonTabProps> = ({
                   />
 
                   {/* Points and Year Labels */}
-                  {trajectoryChartData.coords.map(({ x, y, point }, i) => (
+                  {Array.isArray(trajectoryChartData.coords) && trajectoryChartData.coords.map(({ x, y, point }, i) => (
                     <g key={i}>
                       <circle
                         cx={x}
@@ -987,7 +980,7 @@ export const CarbonTab: React.FC<CarbonTabProps> = ({
           </div>
 
           {/* Agronomic Recommendations */}
-          {result?.recommendations && result.recommendations.length > 0 && (
+          {Array.isArray(result?.recommendations) && result.recommendations.length > 0 && (
             <div
               className="glass-card"
               style={{

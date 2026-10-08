@@ -65,9 +65,9 @@ export const Header: React.FC<HeaderProps> = ({
               letterSpacing: '0.04em',
               padding: '2px 6px',
               borderRadius: 9999,
-              background: 'rgba(16, 185, 129, 0.12)',
+              background: 'var(--brand-green-glow)',
               color: 'var(--brand-green)',
-              border: '1px solid rgba(16, 185, 129, 0.25)'
+              border: '1px solid var(--brand-green)'
             }}>
               DPG
             </span>
@@ -213,18 +213,7 @@ export const Header: React.FC<HeaderProps> = ({
       {/* CrimeRakshak 2-Column App Download Modal */}
       {isAppModalOpen && (
         <div className="modal-overlay">
-          <div
-            className="glass-card"
-            style={{
-              width: '100%',
-              maxWidth: 820,
-              padding: 0,
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: window.innerWidth < 768 ? 'column' : 'row',
-              position: 'relative'
-            }}
-          >
+          <div className="glass-card app-download-modal">
             <button
               onClick={() => setIsAppModalOpen(false)}
               style={{
@@ -242,16 +231,7 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             {/* Left Column: QR Code & Download Link */}
-            <div style={{
-              width: window.innerWidth < 768 ? '100%' : '40%',
-              background: 'rgba(0, 0, 0, 0.08)',
-              padding: '36px 28px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRight: '1px solid var(--border)'
-            }}>
+            <div className="app-download-modal-left">
               <h3 style={{ fontSize: '1.2rem', fontWeight: 800, fontFamily: 'var(--font-heading)', color: 'var(--foreground)', marginBottom: 4 }}>
                 Scan to Install
               </h3>

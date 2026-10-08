@@ -143,13 +143,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       )}
 
       {/* Top Header Section with Greeting & Region Filters */}
-      <div style={{
-        display: 'flex',
-        flexDirection: window.innerWidth < 1100 ? 'column' : 'row',
-        justifyContent: 'space-between',
-        alignItems: window.innerWidth < 1100 ? 'flex-start' : 'center',
-        gap: 16
-      }}>
+      <div className="home-header-row">
         <div>
           <h1 style={{
             fontFamily: 'var(--font-heading)',
@@ -182,10 +176,10 @@ export const HomeTab: React.FC<HomeTabProps> = ({
           }}
         >
           <Filter size={14} color="var(--muted-foreground)" style={{ margin: '0 4px', flexShrink: 0 }} />
-          {plots.length === 0 && (
+          {(!Array.isArray(plots) || plots.length === 0) && (
             <span style={{ fontSize: '0.8rem', color: 'var(--muted-foreground)', padding: '0 8px' }}>No plots created</span>
           )}
-          {plots.map((p) => {
+          {(Array.isArray(plots) ? plots : []).map((p) => {
             const isSelected = activePlot?.id === p.id;
             return (
               <button
@@ -201,8 +195,8 @@ export const HomeTab: React.FC<HomeTabProps> = ({
                   whiteSpace: 'nowrap',
                   transition: 'all 0.2s ease',
                   background: isSelected ? 'var(--brand-green)' : 'transparent',
-                  color: isSelected ? '#ffffff' : 'var(--muted-foreground)',
-                  boxShadow: isSelected ? '0 2px 8px rgba(16, 185, 129, 0.35)' : 'none'
+                  color: isSelected ? 'var(--primary-foreground)' : 'var(--muted-foreground)',
+                  boxShadow: isSelected ? '0 2px 8px var(--brand-green-glow)' : 'none'
                 }}
               >
                 {p.name}
@@ -442,13 +436,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
           </div>
 
           {/* 7-Day Forecast Strips */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(5, 1fr)',
-            gap: 10,
-            paddingTop: 14,
-            borderTop: '1px solid var(--border)'
-          }}>
+          <div className="weather-forecast-strip">
             {defaultWeather.forecast_7d.slice(0, 5).map((d, i) => (
               <div
                 key={i}
@@ -472,7 +460,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       )}
 
       {/* 2-Column Side-by-Side: Registered Plots & Recent Scans */}
-      <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 800 ? '1fr' : '1fr 1fr', gap: 16 }}>
+      <div className="home-split-grid">
         {/* Fields Card */}
         <div className="glass-card" style={{ padding: 22 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
